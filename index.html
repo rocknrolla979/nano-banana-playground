@@ -8,32 +8,20 @@
   * { box-sizing: border-box; }
   body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    background: #0d0d0f;
-    color: #e8e8ea;
-    margin: 0;
-    padding: 24px;
-    min-height: 100vh;
+    background: #0d0d0f; color: #e8e8ea; margin: 0; padding: 24px; min-height: 100vh;
   }
   .container { max-width: 900px; margin: 0 auto; }
   h1 { font-size: 24px; margin: 0 0 4px; }
   .subtitle { color: #888; font-size: 13px; margin-bottom: 24px; }
   .card {
-    background: #17171a;
-    border: 1px solid #27272b;
-    border-radius: 12px;
-    padding: 20px;
-    margin-bottom: 16px;
+    background: #17171a; border: 1px solid #27272b;
+    border-radius: 12px; padding: 20px; margin-bottom: 16px;
   }
   label { display: block; font-size: 13px; color: #aaa; margin-bottom: 6px; }
   input[type="password"], input[type="text"], textarea, select {
-    width: 100%;
-    background: #0d0d0f;
-    border: 1px solid #2d2d32;
-    border-radius: 8px;
-    padding: 10px 12px;
-    color: #e8e8ea;
-    font-size: 14px;
-    font-family: inherit;
+    width: 100%; background: #0d0d0f; border: 1px solid #2d2d32;
+    border-radius: 8px; padding: 10px 12px; color: #e8e8ea;
+    font-size: 14px; font-family: inherit;
   }
   textarea { resize: vertical; min-height: 90px; }
   input:focus, textarea:focus, select:focus { outline: none; border-color: #4a90e2; }
@@ -50,20 +38,9 @@
   .status.error { color: #ff6b6b; }
   .saved-hint { font-size: 11px; color: #666; margin-top: 4px; }
 
-  .img-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
-  }
-  .img-card {
-    background: #111114;
-    border: 1px solid #27272b;
-    border-radius: 10px;
-    overflow: hidden;
-  }
-  .img-card img {
-    width: 100%; aspect-ratio: 1; object-fit: cover; display: block;
-  }
+  .img-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+  .img-card { background: #111114; border: 1px solid #27272b; border-radius: 10px; overflow: hidden; }
+  .img-card img { width: 100%; aspect-ratio: 1; object-fit: cover; display: block; }
   .img-card .dl-btn {
     display: block; width: 100%; background: transparent; color: #888;
     border: none; border-top: 1px solid #27272b; padding: 8px;
@@ -79,7 +56,7 @@
   }
   .tab {
     flex: 1; background: transparent; color: #888; border: none;
-    padding: 10px; font-size: 13px; font-weight: 500; cursor: pointer;
+    padding: 10px; font-size: 12px; font-weight: 500; cursor: pointer;
     border-radius: 7px; width: auto; font-family: inherit;
   }
   .tab.active { background: #27272b; color: #e8e8ea; }
@@ -111,10 +88,7 @@
   }
   .thumb .remove:hover { background: #ff6b6b; }
 
-  /* Small inline ref preview for vector tab */
-  .ref-preview {
-    display: flex; gap: 10px; margin-top: 8px; margin-bottom: 12px; align-items: center;
-  }
+  .ref-preview { display: flex; gap: 10px; margin-top: 8px; margin-bottom: 12px; align-items: center; }
   .ref-preview .ref-thumb {
     position: relative; width: 64px; height: 64px; border-radius: 8px;
     overflow: hidden; border: 1px solid #2d2d32; flex-shrink: 0;
@@ -130,12 +104,25 @@
   .ref-preview .ref-thumb .rm:hover { background: #ff6b6b; }
   .ref-preview .ref-info { font-size: 12px; color: #888; }
   .ref-preview .ref-info .ref-note { font-size: 11px; color: #555; margin-top: 2px; }
+
+  /* GPT mode toggle */
+  .mode-toggle {
+    display: flex; gap: 4px; background: #0d0d0f; border: 1px solid #2d2d32;
+    border-radius: 8px; padding: 3px; margin-bottom: 12px;
+  }
+  .mode-btn {
+    flex: 1; background: transparent; color: #666; border: none;
+    padding: 8px; font-size: 13px; font-weight: 500; cursor: pointer;
+    border-radius: 6px; font-family: inherit; transition: all 0.15s;
+  }
+  .mode-btn.active { background: #27272b; color: #e8e8ea; }
+  .mode-btn:hover:not(.active) { color: #999; }
 </style>
 </head>
 <body>
 <div class="container">
   <h1>🎨 AI Image Playground</h1>
-  <div class="subtitle">Nano Banana 2 + Recraft Vector · fal.ai API</div>
+  <div class="subtitle">Nano Banana 2 · Recraft Vector · GPT Image 2 — fal.ai API</div>
 
   <div class="card">
     <label>FAL API Key</label>
@@ -147,6 +134,7 @@
     <button class="tab active" data-tab="generate">🍌 Generate</button>
     <button class="tab" data-tab="edit">✏️ Edit</button>
     <button class="tab" data-tab="vector">🔷 Vector</button>
+    <button class="tab" data-tab="gpt">💎 GPT Image</button>
   </div>
 
   <!-- GENERATE -->
@@ -154,40 +142,26 @@
     <div class="card">
       <label>Prompt</label>
       <textarea id="prompt-gen" placeholder="A futuristic cat astronaut floating in a neon-lit space station, cinematic lighting"></textarea>
-      <div class="row" style="margin-top: 12px;">
-        <div>
-          <label>Aspect ratio</label>
+      <div class="row" style="margin-top:12px;">
+        <div><label>Aspect ratio</label>
           <select id="aspectRatio-gen">
-            <option value="auto">auto</option>
-            <option value="1:1" selected>1:1</option>
-            <option value="16:9">16:9</option>
-            <option value="9:16">9:16</option>
-            <option value="4:3">4:3</option>
-            <option value="3:4">3:4</option>
-            <option value="21:9">21:9</option>
-            <option value="3:2">3:2</option>
-            <option value="2:3">2:3</option>
-          </select>
-        </div>
-        <div>
-          <label>Resolution</label>
+            <option value="auto">auto</option><option value="1:1" selected>1:1</option>
+            <option value="16:9">16:9</option><option value="9:16">9:16</option>
+            <option value="4:3">4:3</option><option value="3:4">3:4</option>
+            <option value="21:9">21:9</option><option value="3:2">3:2</option><option value="2:3">2:3</option>
+          </select></div>
+        <div><label>Resolution</label>
           <select id="resolution-gen">
             <option value="1K" selected>1K ($0.04)</option>
-            <option value="2K">2K ($0.06)</option>
-            <option value="4K">4K ($0.08)</option>
-          </select>
-        </div>
-        <div>
-          <label>Количество</label>
+            <option value="2K">2K ($0.06)</option><option value="4K">4K ($0.08)</option>
+          </select></div>
+        <div><label>Количество</label>
           <select id="numImages-gen">
-            <option value="1" selected>1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-          </select>
-        </div>
+            <option value="1" selected>1</option><option value="2">2</option>
+            <option value="3">3</option><option value="4">4</option>
+          </select></div>
       </div>
-      <button class="action-btn" id="generateBtn" style="margin-top: 16px;">Сгенерировать</button>
+      <button class="action-btn" id="generateBtn" style="margin-top:16px;">Сгенерировать</button>
       <div class="status" id="status-gen"></div>
     </div>
   </div>
@@ -197,47 +171,32 @@
     <div class="card">
       <label>Референсы (до 3 фото)</label>
       <div class="upload-zone" id="uploadZone">
-        <div>📎 Перетащи фото сюда или кликни чтобы выбрать</div>
-        <div style="font-size: 11px; margin-top: 4px; color: #666;">JPG, PNG, WebP · до 3 штук</div>
+        <div>📎 Перетащи фото сюда или кликни</div>
+        <div style="font-size:11px;margin-top:4px;color:#666;">JPG, PNG, WebP · до 3 штук</div>
         <input type="file" id="fileInput" accept="image/*" multiple>
       </div>
       <div class="thumbs" id="thumbs"></div>
-      <label style="margin-top: 16px;">Инструкция</label>
+      <label style="margin-top:16px;">Инструкция</label>
       <textarea id="prompt-edit" placeholder="replace the background with a sunset beach, keep the person exactly as is"></textarea>
-      <div class="row" style="margin-top: 12px;">
-        <div>
-          <label>Aspect ratio</label>
+      <div class="row" style="margin-top:12px;">
+        <div><label>Aspect ratio</label>
           <select id="aspectRatio-edit">
-            <option value="auto" selected>auto (как у исходника)</option>
-            <option value="1:1">1:1</option>
-            <option value="16:9">16:9</option>
-            <option value="9:16">9:16</option>
-            <option value="4:3">4:3</option>
-            <option value="3:4">3:4</option>
-            <option value="21:9">21:9</option>
-            <option value="3:2">3:2</option>
-            <option value="2:3">2:3</option>
-          </select>
-        </div>
-        <div>
-          <label>Resolution</label>
+            <option value="auto" selected>auto</option><option value="1:1">1:1</option>
+            <option value="16:9">16:9</option><option value="9:16">9:16</option>
+            <option value="4:3">4:3</option><option value="3:4">3:4</option>
+          </select></div>
+        <div><label>Resolution</label>
           <select id="resolution-edit">
             <option value="1K" selected>1K ($0.08)</option>
-            <option value="2K">2K ($0.12)</option>
-            <option value="4K">4K ($0.16)</option>
-          </select>
-        </div>
-        <div>
-          <label>Количество</label>
+            <option value="2K">2K ($0.12)</option><option value="4K">4K ($0.16)</option>
+          </select></div>
+        <div><label>Количество</label>
           <select id="numImages-edit">
-            <option value="1" selected>1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-          </select>
-        </div>
+            <option value="1" selected>1</option><option value="2">2</option>
+            <option value="3">3</option><option value="4">4</option>
+          </select></div>
       </div>
-      <button class="action-btn" id="editBtn" style="margin-top: 16px;">Отредактировать</button>
+      <button class="action-btn" id="editBtn" style="margin-top:16px;">Отредактировать</button>
       <div class="status" id="status-edit"></div>
     </div>
   </div>
@@ -245,45 +204,34 @@
   <!-- VECTOR -->
   <div class="pane" id="pane-vector">
     <div class="card">
-      <!-- Optional reference -->
       <label>Визуальный референс (опционально)</label>
-      <div class="upload-zone" id="vecUploadZone" style="padding: 14px;">
-        <div>📎 Перетащи макет или кликни — нейросеть возьмёт его за основу</div>
-        <div style="font-size: 11px; margin-top: 3px; color: #555;">Без референса — генерация с нуля через V4 · С референсом — вариации через V3</div>
+      <div class="upload-zone" id="vecUploadZone" style="padding:14px;">
+        <div>📎 Перетащи макет — нейросеть возьмёт за основу</div>
+        <div style="font-size:11px;margin-top:3px;color:#555;">Без референса → V4 с нуля · С референсом → V3 вариации</div>
         <input type="file" id="vecFileInput" accept="image/*">
       </div>
       <div class="ref-preview" id="vecRefPreview" style="display:none;"></div>
-
       <label>Prompt</label>
-      <textarea id="prompt-vec" placeholder="a minimalist vector logo featuring a geometric mountain peak in navy blue, with the company name 'Summit' in a modern sans-serif font below"></textarea>
-
-      <div class="row" style="margin-top: 12px;">
-        <div>
-          <label>Модель (без референса)</label>
+      <textarea id="prompt-vec" placeholder="a minimalist vector logo featuring a geometric mountain peak in navy blue"></textarea>
+      <div class="row" style="margin-top:12px;">
+        <div><label>Модель (без референса)</label>
           <select id="model-vec">
             <option value="fal-ai/recraft/v4/text-to-vector" selected>Recraft V4 ($0.08)</option>
             <option value="fal-ai/recraft/v4.1/text-to-vector">Recraft V4.1 ($0.08)</option>
-            <option value="fal-ai/recraft/v4/pro/text-to-vector">Recraft V4 Pro ($0.30)</option>
-            <option value="fal-ai/recraft/v4.1/pro/text-to-vector">Recraft V4.1 Pro ($0.30)</option>
-          </select>
-        </div>
-        <div>
-          <label>Размер</label>
+            <option value="fal-ai/recraft/v4/pro/text-to-vector">V4 Pro ($0.30)</option>
+            <option value="fal-ai/recraft/v4.1/pro/text-to-vector">V4.1 Pro ($0.30)</option>
+          </select></div>
+        <div><label>Размер</label>
           <select id="size-vec">
             <option value="1024x1024" selected>1024 × 1024</option>
             <option value="1365x1024">1365 × 1024 (4:3)</option>
             <option value="1024x1365">1024 × 1365 (3:4)</option>
             <option value="1536x1024">1536 × 1024 (3:2)</option>
-            <option value="1024x1536">1024 × 1536 (2:3)</option>
             <option value="1820x1024">1820 × 1024 (16:9)</option>
-            <option value="1024x1820">1024 × 1820 (9:16)</option>
-          </select>
-        </div>
+          </select></div>
       </div>
-
       <div class="row">
-        <div>
-          <label>Стиль (с референсом — V3)</label>
+        <div><label>Стиль (с референсом — V3)</label>
           <select id="style-vec">
             <option value="vector_illustration" selected>Vector illustration</option>
             <option value="vector_illustration/engraving">Engraving</option>
@@ -295,12 +243,58 @@
             <option value="digital_illustration/2d_art_poster">2D Art poster</option>
             <option value="digital_illustration/handmade_3d">Handmade 3D</option>
             <option value="realistic_image">Realistic image</option>
-          </select>
-        </div>
+          </select></div>
+      </div>
+      <button class="action-btn" id="vectorBtn" style="margin-top:16px;">Сгенерировать вектор</button>
+      <div class="status" id="status-vec"></div>
+    </div>
+  </div>
+
+  <!-- GPT IMAGE -->
+  <div class="pane" id="pane-gpt">
+    <div class="card">
+      <div class="mode-toggle" id="gptModeToggle">
+        <button class="mode-btn active" data-mode="generate" onclick="setGptMode('generate')">Генерация с нуля</button>
+        <button class="mode-btn" data-mode="edit" onclick="setGptMode('edit')">Редактирование фото</button>
       </div>
 
-      <button class="action-btn" id="vectorBtn" style="margin-top: 16px;">Сгенерировать вектор</button>
-      <div class="status" id="status-vec"></div>
+      <!-- Edit: upload zone -->
+      <div id="gptEditUpload" style="display:none;">
+        <label>Исходное фото</label>
+        <div class="upload-zone" id="gptUploadZone" style="padding:14px;">
+          <div>📎 Перетащи фото для редактирования</div>
+          <div style="font-size:11px;margin-top:3px;color:#555;">JPG, PNG, WebP</div>
+          <input type="file" id="gptFileInput" accept="image/*">
+        </div>
+        <div class="ref-preview" id="gptRefPreview" style="display:none;"></div>
+      </div>
+
+      <label>Prompt</label>
+      <textarea id="prompt-gpt" placeholder="A product photo of a luxury perfume bottle on a marble surface, dramatic side lighting, editorial style"></textarea>
+
+      <div class="row" style="margin-top:12px;">
+        <div><label>Размер</label>
+          <select id="size-gpt">
+            <option value="1024x1024" selected>1024 × 1024</option>
+            <option value="1536x1024">1536 × 1024 (3:2)</option>
+            <option value="1024x1536">1024 × 1536 (2:3)</option>
+          </select></div>
+        <div><label>Качество</label>
+          <select id="quality-gpt">
+            <option value="low">Low (дешевле)</option>
+            <option value="medium">Medium</option>
+            <option value="high" selected>High (лучше)</option>
+          </select></div>
+        <div><label>Фон</label>
+          <select id="background-gpt">
+            <option value="auto" selected>Auto</option>
+            <option value="transparent">Прозрачный</option>
+            <option value="opaque">Непрозрачный</option>
+          </select></div>
+      </div>
+
+      <button class="action-btn" id="gptBtn" style="margin-top:16px;">Сгенерировать</button>
+      <div class="status" id="status-gpt"></div>
     </div>
   </div>
 
@@ -321,253 +315,247 @@
     });
   });
 
-  // ---- SHARED API ----
+  // ---- SHARED ----
   async function callFal(endpoint, payload, apiKey, statusEl) {
     const submitRes = await fetch(`https://queue.fal.run/${endpoint}`, {
       method: 'POST',
       headers: { 'Authorization': `Key ${apiKey}`, 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
     });
-    if (!submitRes.ok) { const err = await submitRes.text(); throw new Error(`${submitRes.status}: ${err}`); }
+    if (!submitRes.ok) { throw new Error(`${submitRes.status}: ${await submitRes.text()}`); }
     const submitData = await submitRes.json();
-    const statusUrl = submitData.status_url;
-    const responseUrl = submitData.response_url;
     setStatus(statusEl, `В очереди (${submitData.request_id.slice(0, 8)}...)`);
     let attempts = 0;
-    while (attempts < 120) {
+    while (attempts < 180) {
       await new Promise(r => setTimeout(r, 1500));
-      const sRes = await fetch(statusUrl, { headers: { 'Authorization': `Key ${apiKey}` } });
+      const sRes = await fetch(submitData.status_url, { headers: { 'Authorization': `Key ${apiKey}` } });
       const sData = await sRes.json();
       if (sData.status === 'COMPLETED') { setStatus(statusEl, 'Готово, загружаю...'); break; }
       else if (sData.status === 'IN_PROGRESS') { setStatus(statusEl, 'Генерирую... 🎨'); }
-      else if (sData.status === 'IN_QUEUE') { setStatus(statusEl, `В очереди (позиция ${sData.queue_position ?? '?'})`); }
+      else if (sData.status === 'IN_QUEUE') { setStatus(statusEl, `В очереди (${sData.queue_position ?? '?'})`); }
       else if (sData.status === 'FAILED') { throw new Error('Не удалось: ' + JSON.stringify(sData)); }
       attempts++;
     }
-    const resultRes = await fetch(responseUrl, { headers: { 'Authorization': `Key ${apiKey}` } });
+    const resultRes = await fetch(submitData.response_url, { headers: { 'Authorization': `Key ${apiKey}` } });
     return await resultRes.json();
   }
 
-  function readFileAsDataURL(file) {
+  function readFile(file) {
     return new Promise((res, rej) => {
       const r = new FileReader(); r.onload = () => res(r.result); r.onerror = rej; r.readAsDataURL(file);
     });
   }
 
-  // ---- GENERATE ----
+  function setupUploadZone(zoneEl, inputEl, onFile) {
+    zoneEl.addEventListener('click', () => inputEl.click());
+    zoneEl.addEventListener('dragover', e => { e.preventDefault(); zoneEl.classList.add('dragover'); });
+    zoneEl.addEventListener('dragleave', () => zoneEl.classList.remove('dragover'));
+    zoneEl.addEventListener('drop', async e => {
+      e.preventDefault(); zoneEl.classList.remove('dragover');
+      const f = Array.from(e.dataTransfer.files).find(f => f.type.startsWith('image/'));
+      if (f) onFile(f);
+    });
+    inputEl.addEventListener('change', e => { if (e.target.files[0]) onFile(e.target.files[0]); inputEl.value = ''; });
+  }
+
+  function renderRefPreview(container, ref, onRemove) {
+    container.innerHTML = '';
+    if (!ref) { container.style.display = 'none'; return; }
+    container.style.display = 'flex';
+    const thumb = document.createElement('div'); thumb.className = 'ref-thumb';
+    const img = document.createElement('img'); img.src = ref.dataUrl; thumb.appendChild(img);
+    const rm = document.createElement('button'); rm.className = 'rm'; rm.textContent = '×';
+    rm.onclick = onRemove; thumb.appendChild(rm);
+    container.appendChild(thumb);
+    const info = document.createElement('div'); info.className = 'ref-info';
+    info.innerHTML = `<div>${ref.name}</div>`;
+    container.appendChild(info);
+  }
+
+  // ---- GENERATE (Nano Banana) ----
   const generateBtn = document.getElementById('generateBtn');
   const statusGen = document.getElementById('status-gen');
   generateBtn.addEventListener('click', doGenerate);
-  document.getElementById('prompt-gen').addEventListener('keydown', e => {
-    if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) doGenerate();
-  });
+  document.getElementById('prompt-gen').addEventListener('keydown', e => { if (e.key==='Enter'&&(e.metaKey||e.ctrlKey)) doGenerate(); });
 
   async function doGenerate() {
-    const apiKey = apiKeyInput.value.trim();
-    const prompt = document.getElementById('prompt-gen').value.trim();
-    if (!apiKey) { setStatus(statusGen, 'Введи API-ключ', true); return; }
-    if (!prompt) { setStatus(statusGen, 'Введи prompt', true); return; }
-    generateBtn.disabled = true;
-    setStatus(statusGen, 'Отправляю...');
+    const apiKey = apiKeyInput.value.trim(), prompt = document.getElementById('prompt-gen').value.trim();
+    if (!apiKey) return setStatus(statusGen,'Введи API-ключ',true);
+    if (!prompt) return setStatus(statusGen,'Введи prompt',true);
+    generateBtn.disabled = true; setStatus(statusGen,'Отправляю...');
     try {
       const data = await callFal('fal-ai/nano-banana-2', {
-        prompt,
-        aspect_ratio: document.getElementById('aspectRatio-gen').value,
+        prompt, aspect_ratio: document.getElementById('aspectRatio-gen').value,
         resolution: document.getElementById('resolution-gen').value,
-        num_images: parseInt(document.getElementById('numImages-gen').value),
-        output_format: 'png'
+        num_images: parseInt(document.getElementById('numImages-gen').value), output_format:'png'
       }, apiKey, statusGen);
-      if (!data.images?.length) throw new Error('Нет картинок: ' + JSON.stringify(data));
-      renderImageCards(data.images, prompt, 'png');
+      if (!data.images?.length) throw new Error('Нет картинок');
+      renderCards(data.images, prompt, 'png');
       setStatus(statusGen, `✓ Готово (${data.images.length} шт.)`);
-    } catch (err) { console.error(err); setStatus(statusGen, 'Ошибка: ' + err.message, true); }
+    } catch(e){ console.error(e); setStatus(statusGen,'Ошибка: '+e.message,true); }
     finally { generateBtn.disabled = false; }
   }
 
-  // ---- EDIT ----
-  const editBtn = document.getElementById('editBtn');
-  const statusEdit = document.getElementById('status-edit');
-  const uploadZone = document.getElementById('uploadZone');
-  const fileInput = document.getElementById('fileInput');
-  const thumbs = document.getElementById('thumbs');
-  const uploadedImages = [];
+  // ---- EDIT (Nano Banana) ----
+  const editBtn = document.getElementById('editBtn'), statusEdit = document.getElementById('status-edit');
+  const uploadZone = document.getElementById('uploadZone'), fileInput = document.getElementById('fileInput');
+  const thumbs = document.getElementById('thumbs'), uploadedImages = [];
 
   editBtn.addEventListener('click', doEdit);
-  document.getElementById('prompt-edit').addEventListener('keydown', e => {
-    if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) doEdit();
-  });
+  document.getElementById('prompt-edit').addEventListener('keydown', e => { if (e.key==='Enter'&&(e.metaKey||e.ctrlKey)) doEdit(); });
   uploadZone.addEventListener('click', () => fileInput.click());
   fileInput.addEventListener('change', e => handleEditFiles(e.target.files));
   uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.classList.add('dragover'); });
   uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('dragover'));
-  uploadZone.addEventListener('drop', e => {
-    e.preventDefault(); uploadZone.classList.remove('dragover');
-    handleEditFiles(e.dataTransfer.files);
-  });
+  uploadZone.addEventListener('drop', e => { e.preventDefault(); uploadZone.classList.remove('dragover'); handleEditFiles(e.dataTransfer.files); });
 
-  async function handleEditFiles(fileList) {
-    for (const file of Array.from(fileList).filter(f => f.type.startsWith('image/'))) {
-      if (uploadedImages.length >= 3) { setStatus(statusEdit, 'Максимум 3', true); break; }
-      uploadedImages.push({ dataUrl: await readFileAsDataURL(file), name: file.name });
+  async function handleEditFiles(fl) {
+    for (const f of Array.from(fl).filter(f=>f.type.startsWith('image/'))) {
+      if (uploadedImages.length>=3) break;
+      uploadedImages.push({ dataUrl: await readFile(f), name: f.name });
     }
-    fileInput.value = '';
-    renderThumbs();
+    fileInput.value=''; renderThumbs();
   }
-
   function renderThumbs() {
-    thumbs.innerHTML = '';
-    uploadedImages.forEach((img, i) => {
-      const div = document.createElement('div'); div.className = 'thumb';
-      const el = document.createElement('img'); el.src = img.dataUrl; el.title = img.name; div.appendChild(el);
-      const rm = document.createElement('button'); rm.className = 'remove'; rm.textContent = '×';
-      rm.onclick = () => { uploadedImages.splice(i, 1); renderThumbs(); };
-      div.appendChild(rm); thumbs.appendChild(div);
+    thumbs.innerHTML='';
+    uploadedImages.forEach((img,i)=>{
+      const d=document.createElement('div'); d.className='thumb';
+      const el=document.createElement('img'); el.src=img.dataUrl; d.appendChild(el);
+      const rm=document.createElement('button'); rm.className='remove'; rm.textContent='×';
+      rm.onclick=()=>{uploadedImages.splice(i,1);renderThumbs();}; d.appendChild(rm); thumbs.appendChild(d);
     });
   }
-
   async function doEdit() {
-    const apiKey = apiKeyInput.value.trim();
-    const prompt = document.getElementById('prompt-edit').value.trim();
-    if (!apiKey) { setStatus(statusEdit, 'Введи API-ключ', true); return; }
-    if (!uploadedImages.length) { setStatus(statusEdit, 'Загрузи фото', true); return; }
-    if (!prompt) { setStatus(statusEdit, 'Введи инструкцию', true); return; }
-    editBtn.disabled = true;
-    setStatus(statusEdit, 'Отправляю...');
+    const apiKey=apiKeyInput.value.trim(), prompt=document.getElementById('prompt-edit').value.trim();
+    if (!apiKey) return setStatus(statusEdit,'Введи API-ключ',true);
+    if (!uploadedImages.length) return setStatus(statusEdit,'Загрузи фото',true);
+    if (!prompt) return setStatus(statusEdit,'Введи инструкцию',true);
+    editBtn.disabled=true; setStatus(statusEdit,'Отправляю...');
     try {
       const data = await callFal('fal-ai/nano-banana-2/edit', {
-        prompt,
-        image_urls: uploadedImages.map(i => i.dataUrl),
+        prompt, image_urls: uploadedImages.map(i=>i.dataUrl),
         aspect_ratio: document.getElementById('aspectRatio-edit').value,
         resolution: document.getElementById('resolution-edit').value,
-        num_images: parseInt(document.getElementById('numImages-edit').value),
-        output_format: 'png'
+        num_images: parseInt(document.getElementById('numImages-edit').value), output_format:'png'
       }, apiKey, statusEdit);
-      if (!data.images?.length) throw new Error('Нет картинок: ' + JSON.stringify(data));
-      renderImageCards(data.images, prompt, 'png');
+      if (!data.images?.length) throw new Error('Нет картинок');
+      renderCards(data.images, prompt, 'png');
       setStatus(statusEdit, `✓ Готово (${data.images.length} шт.)`);
-    } catch (err) { console.error(err); setStatus(statusEdit, 'Ошибка: ' + err.message, true); }
-    finally { editBtn.disabled = false; }
+    } catch(e){ console.error(e); setStatus(statusEdit,'Ошибка: '+e.message,true); }
+    finally { editBtn.disabled=false; }
   }
 
-  // ---- VECTOR ----
-  const vectorBtn = document.getElementById('vectorBtn');
-  const statusVec = document.getElementById('status-vec');
-  const vecUploadZone = document.getElementById('vecUploadZone');
-  const vecFileInput = document.getElementById('vecFileInput');
-  const vecRefPreview = document.getElementById('vecRefPreview');
-  let vecRefImage = null; // { dataUrl, name }
+  // ---- VECTOR (Recraft) ----
+  const vectorBtn = document.getElementById('vectorBtn'), statusVec = document.getElementById('status-vec');
+  let vecRefImage = null;
 
   vectorBtn.addEventListener('click', doVector);
-  document.getElementById('prompt-vec').addEventListener('keydown', e => {
-    if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) doVector();
-  });
+  document.getElementById('prompt-vec').addEventListener('keydown', e => { if (e.key==='Enter'&&(e.metaKey||e.ctrlKey)) doVector(); });
 
-  vecUploadZone.addEventListener('click', () => vecFileInput.click());
-  vecFileInput.addEventListener('change', async e => {
-    const file = e.target.files[0];
-    if (file && file.type.startsWith('image/')) {
-      vecRefImage = { dataUrl: await readFileAsDataURL(file), name: file.name };
-      renderVecRef();
-    }
-    vecFileInput.value = '';
-  });
-  vecUploadZone.addEventListener('dragover', e => { e.preventDefault(); vecUploadZone.classList.add('dragover'); });
-  vecUploadZone.addEventListener('dragleave', () => vecUploadZone.classList.remove('dragover'));
-  vecUploadZone.addEventListener('drop', async e => {
-    e.preventDefault(); vecUploadZone.classList.remove('dragover');
-    const file = Array.from(e.dataTransfer.files).find(f => f.type.startsWith('image/'));
-    if (file) {
-      vecRefImage = { dataUrl: await readFileAsDataURL(file), name: file.name };
-      renderVecRef();
-    }
-  });
-
-  function renderVecRef() {
-    vecRefPreview.innerHTML = '';
-    if (!vecRefImage) {
-      vecRefPreview.style.display = 'none';
-      return;
-    }
-    vecRefPreview.style.display = 'flex';
-    const thumb = document.createElement('div'); thumb.className = 'ref-thumb';
-    const img = document.createElement('img'); img.src = vecRefImage.dataUrl; thumb.appendChild(img);
-    const rm = document.createElement('button'); rm.className = 'rm'; rm.textContent = '×';
-    rm.onclick = () => { vecRefImage = null; renderVecRef(); };
-    thumb.appendChild(rm);
-    vecRefPreview.appendChild(thumb);
-    const info = document.createElement('div'); info.className = 'ref-info';
-    info.innerHTML = `<div>${vecRefImage.name}</div><div class="ref-note">Будет использован Recraft V3 image-to-image со стилем из селектора ниже</div>`;
-    vecRefPreview.appendChild(info);
-  }
+  setupUploadZone(
+    document.getElementById('vecUploadZone'),
+    document.getElementById('vecFileInput'),
+    async f => { vecRefImage = { dataUrl: await readFile(f), name: f.name }; renderRefPreview(document.getElementById('vecRefPreview'), vecRefImage, ()=>{vecRefImage=null;renderRefPreview(document.getElementById('vecRefPreview'),null);}); }
+  );
 
   async function doVector() {
-    const apiKey = apiKeyInput.value.trim();
-    const prompt = document.getElementById('prompt-vec').value.trim();
-    if (!apiKey) { setStatus(statusVec, 'Введи API-ключ', true); return; }
-    if (!prompt) { setStatus(statusVec, 'Введи prompt', true); return; }
-    vectorBtn.disabled = true;
-    setStatus(statusVec, 'Отправляю...');
+    const apiKey=apiKeyInput.value.trim(), prompt=document.getElementById('prompt-vec').value.trim();
+    if (!apiKey) return setStatus(statusVec,'Введи API-ключ',true);
+    if (!prompt) return setStatus(statusVec,'Введи prompt',true);
+    vectorBtn.disabled=true; setStatus(statusVec,'Отправляю...');
     try {
-      let data;
-      const style = document.getElementById('style-vec').value;
-      const size = document.getElementById('size-vec').value;
-      const [w, h] = size.split('x').map(Number);
-
+      let data; const size=document.getElementById('size-vec').value; const [w,h]=size.split('x').map(Number);
       if (vecRefImage) {
-        // With reference → Recraft V3 image-to-image
         data = await callFal('fal-ai/recraft/v3/image-to-image', {
-          prompt,
-          image_url: vecRefImage.dataUrl,
-          style,
-          image_size: { width: w, height: h }
+          prompt, image_url: vecRefImage.dataUrl,
+          style: document.getElementById('style-vec').value,
+          image_size: {width:w, height:h}
         }, apiKey, statusVec);
       } else {
-        // No reference → V4 text-to-vector
-        const endpoint = document.getElementById('model-vec').value;
-        data = await callFal(endpoint, {
-          prompt,
-          image_size: { width: w, height: h }
+        data = await callFal(document.getElementById('model-vec').value, {
+          prompt, image_size: {width:w, height:h}
         }, apiKey, statusVec);
       }
-
-      if (!data.images?.length) throw new Error('Нет результата: ' + JSON.stringify(data));
-
-      // Determine format from response
-      const isSvg = data.images[0].content_type === 'image/svg+xml' ||
-                     data.images[0].url?.endsWith('.svg');
-      renderImageCards(data.images, prompt, isSvg ? 'svg' : 'png');
+      if (!data.images?.length) throw new Error('Нет результата');
+      const isSvg = data.images[0].content_type==='image/svg+xml' || data.images[0].url?.endsWith('.svg');
+      renderCards(data.images, prompt, isSvg?'svg':'png');
       setStatus(statusVec, '✓ Готово!');
-    } catch (err) { console.error(err); setStatus(statusVec, 'Ошибка: ' + err.message, true); }
-    finally { vectorBtn.disabled = false; }
+    } catch(e){ console.error(e); setStatus(statusVec,'Ошибка: '+e.message,true); }
+    finally { vectorBtn.disabled=false; }
   }
 
-  // ---- RENDER RESULTS ----
-  function renderImageCards(images, prompt, format) {
+  // ---- GPT IMAGE ----
+  let gptMode = 'generate';
+  let gptRefImage = null;
+  const gptBtn = document.getElementById('gptBtn'), statusGpt = document.getElementById('status-gpt');
+
+  gptBtn.addEventListener('click', doGpt);
+  document.getElementById('prompt-gpt').addEventListener('keydown', e => { if (e.key==='Enter'&&(e.metaKey||e.ctrlKey)) doGpt(); });
+
+  function setGptMode(mode) {
+    gptMode = mode;
+    document.querySelectorAll('#gptModeToggle .mode-btn').forEach(b => b.classList.toggle('active', b.dataset.mode===mode));
+    document.getElementById('gptEditUpload').style.display = mode==='edit' ? 'block' : 'none';
+    gptBtn.textContent = mode==='edit' ? 'Отредактировать' : 'Сгенерировать';
+  }
+
+  setupUploadZone(
+    document.getElementById('gptUploadZone'),
+    document.getElementById('gptFileInput'),
+    async f => { gptRefImage = { dataUrl: await readFile(f), name: f.name }; renderRefPreview(document.getElementById('gptRefPreview'), gptRefImage, ()=>{gptRefImage=null;renderRefPreview(document.getElementById('gptRefPreview'),null);}); }
+  );
+
+  async function doGpt() {
+    const apiKey=apiKeyInput.value.trim(), prompt=document.getElementById('prompt-gpt').value.trim();
+    if (!apiKey) return setStatus(statusGpt,'Введи API-ключ',true);
+    if (!prompt) return setStatus(statusGpt,'Введи prompt',true);
+    if (gptMode==='edit' && !gptRefImage) return setStatus(statusGpt,'Загрузи фото для редактирования',true);
+
+    gptBtn.disabled=true; setStatus(statusGpt,'Отправляю...');
+    try {
+      const size = document.getElementById('size-gpt').value;
+      const quality = document.getElementById('quality-gpt').value;
+      const background = document.getElementById('background-gpt').value;
+      let data;
+
+      if (gptMode==='edit') {
+        data = await callFal('openai/gpt-image-2/edit', {
+          prompt,
+          image_urls: [gptRefImage.dataUrl],
+          quality,
+          size,
+          background
+        }, apiKey, statusGpt);
+      } else {
+        data = await callFal('openai/gpt-image-2', {
+          prompt,
+          quality,
+          size,
+          background
+        }, apiKey, statusGpt);
+      }
+
+      if (!data.images?.length) throw new Error('Нет результата');
+      renderCards(data.images, prompt, 'png');
+      setStatus(statusGpt, '✓ Готово!');
+    } catch(e){ console.error(e); setStatus(statusGpt,'Ошибка: '+e.message,true); }
+    finally { gptBtn.disabled=false; }
+  }
+
+  // ---- RENDER ----
+  function renderCards(images, prompt, format) {
     images.forEach(img => {
-      const card = document.createElement('div');
-      card.className = 'img-card';
-      const imgEl = document.createElement('img');
-      imgEl.src = img.url;
-      imgEl.alt = prompt.slice(0, 60);
-      imgEl.title = prompt;
-      card.appendChild(imgEl);
-      const dlBtn = document.createElement('button');
-      dlBtn.className = 'dl-btn';
-      dlBtn.textContent = format === 'svg' ? '⬇ SVG' : '⬇ Скачать';
-      dlBtn.onclick = () => {
-        const a = document.createElement('a');
-        a.href = img.url;
-        a.download = (format === 'svg' ? 'recraft_' : 'nano_banana_') + Date.now() + '.' + format;
-        a.click();
-      };
-      card.appendChild(dlBtn);
-      results.prepend(card);
+      const card = document.createElement('div'); card.className = 'img-card';
+      const el = document.createElement('img'); el.src=img.url; el.alt=prompt.slice(0,60); el.title=prompt; card.appendChild(el);
+      const dl = document.createElement('button'); dl.className='dl-btn';
+      dl.textContent = format==='svg' ? '⬇ SVG' : '⬇ Скачать';
+      dl.onclick = () => { const a=document.createElement('a'); a.href=img.url; a.download=(format==='svg'?'recraft_':'img_')+Date.now()+'.'+format; a.click(); };
+      card.appendChild(dl); results.prepend(card);
     });
   }
 
-  function setStatus(el, msg, isError = false) {
-    el.textContent = msg;
-    el.className = 'status' + (isError ? ' error' : '');
+  function setStatus(el, msg, isError=false) {
+    el.textContent=msg; el.className='status'+(isError?' error':'');
   }
 </script>
 </body>
