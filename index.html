@@ -54,15 +54,38 @@
   button:disabled { background: #2d2d32; cursor: not-allowed; }
   .status { font-size: 13px; color: #888; margin-top: 12px; min-height: 18px; }
   .status.error { color: #ff6b6b; }
-  .result img { width: 100%; border-radius: 8px; display: block; }
-  .result-item { margin-bottom: 12px; }
-  .result-item a {
-    display: inline-block;
-    margin-top: 8px;
-    color: #4a90e2;
-    font-size: 13px;
-    text-decoration: none;
+  .img-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
   }
+  .img-card {
+    background: #111114;
+    border: 1px solid #27272b;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .img-card img {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    display: block;
+  }
+  .img-card .dl-btn {
+    display: block;
+    width: 100%;
+    background: transparent;
+    color: #888;
+    border: none;
+    border-top: 1px solid #27272b;
+    padding: 8px;
+    font-size: 12px;
+    font-family: inherit;
+    cursor: pointer;
+    text-align: center;
+    transition: color 0.15s;
+  }
+  .img-card .dl-btn:hover { color: #4a90e2; }
   .saved-hint { font-size: 11px; color: #666; margin-top: 4px; }
 
   .tabs {
@@ -251,7 +274,7 @@
     </div>
   </div>
 
-  <div id="results"></div>
+  <div class="img-grid" id="results"></div>
 </div>
 
 <script>
@@ -448,32 +471,29 @@
   }
 
   function renderResults(images, prompt) {
-    const card = document.createElement('div');
-    card.className = 'card';
+    images.forEach((img) => {
+      const card = document.createElement('div');
+      card.className = 'img-card';
 
-    const header = document.createElement('div');
-    header.style.fontSize = '13px';
-    header.style.color = '#888';
-    header.style.marginBottom = '12px';
-    header.textContent = prompt.length > 100 ? prompt.slice(0, 100) + '...' : prompt;
-    card.appendChild(header);
-
-    images.forEach((img, i) => {
-      const item = document.createElement('div');
-      item.className = 'result-item';
       const imgEl = document.createElement('img');
       imgEl.src = img.url;
-      imgEl.alt = `Generated ${i + 1}`;
-      item.appendChild(imgEl);
-      const link = document.createElement('a');
-      link.href = img.url;
-      link.target = '_blank';
-      link.textContent = '↗ Открыть в новой вкладке';
-      item.appendChild(link);
-      card.appendChild(item);
-    });
+      imgEl.alt = prompt.slice(0, 60);
+      imgEl.title = prompt;
+      card.appendChild(imgEl);
 
-    results.prepend(card);
+      const dlBtn = document.createElement('button');
+      dlBtn.className = 'dl-btn';
+      dlBtn.textContent = '⬇ Скачать';
+      dlBtn.onclick = () => {
+        const a = document.createElement('a');
+        a.href = img.url;
+        a.download = 'nano_banana_' + Date.now() + '.png';
+        a.click();
+      };
+      card.appendChild(dlBtn);
+
+      results.prepend(card);
+    });
   }
 
   function setStatus(el, msg, isError = false) {
