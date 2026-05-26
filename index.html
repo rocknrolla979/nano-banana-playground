@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Nano Banana 2 — Песочница</title>
+<title>AI Image Playground — fal.ai</title>
 <style>
   * { box-sizing: border-box; }
   body {
@@ -39,21 +39,17 @@
   input:focus, textarea:focus, select:focus { outline: none; border-color: #4a90e2; }
   .row { display: flex; gap: 12px; margin-bottom: 12px; }
   .row > div { flex: 1; }
-  button {
-    background: #4a90e2;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    padding: 12px 20px;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    width: 100%;
+  .action-btn {
+    background: #4a90e2; color: white; border: none; border-radius: 8px;
+    padding: 12px 20px; font-size: 14px; font-weight: 600; cursor: pointer;
+    width: 100%; font-family: inherit;
   }
-  button:hover:not(:disabled) { background: #5aa0f2; }
-  button:disabled { background: #2d2d32; cursor: not-allowed; }
+  .action-btn:hover:not(:disabled) { background: #5aa0f2; }
+  .action-btn:disabled { background: #2d2d32; cursor: not-allowed; }
   .status { font-size: 13px; color: #888; margin-top: 12px; min-height: 18px; }
   .status.error { color: #ff6b6b; }
+  .saved-hint { font-size: 11px; color: #666; margin-top: 4px; }
+
   .img-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -66,48 +62,25 @@
     overflow: hidden;
   }
   .img-card img {
-    width: 100%;
-    aspect-ratio: 1;
-    object-fit: cover;
-    display: block;
+    width: 100%; aspect-ratio: 1; object-fit: cover; display: block;
   }
   .img-card .dl-btn {
-    display: block;
-    width: 100%;
-    background: transparent;
-    color: #888;
-    border: none;
-    border-top: 1px solid #27272b;
-    padding: 8px;
-    font-size: 12px;
-    font-family: inherit;
-    cursor: pointer;
-    text-align: center;
-    transition: color 0.15s;
+    display: block; width: 100%; background: transparent; color: #888;
+    border: none; border-top: 1px solid #27272b; padding: 8px;
+    font-size: 12px; font-family: inherit; cursor: pointer;
+    text-align: center; transition: color 0.15s;
   }
   .img-card .dl-btn:hover { color: #4a90e2; }
-  .saved-hint { font-size: 11px; color: #666; margin-top: 4px; }
 
   .tabs {
-    display: flex;
-    gap: 4px;
-    margin-bottom: 16px;
-    background: #17171a;
-    border: 1px solid #27272b;
-    border-radius: 10px;
-    padding: 4px;
+    display: flex; gap: 4px; margin-bottom: 16px;
+    background: #17171a; border: 1px solid #27272b;
+    border-radius: 10px; padding: 4px;
   }
   .tab {
-    flex: 1;
-    background: transparent;
-    color: #888;
-    border: none;
-    padding: 10px;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    border-radius: 7px;
-    width: auto;
+    flex: 1; background: transparent; color: #888; border: none;
+    padding: 10px; font-size: 13px; font-weight: 500; cursor: pointer;
+    border-radius: 7px; width: auto; font-family: inherit;
   }
   .tab.active { background: #27272b; color: #e8e8ea; }
   .tab:hover:not(.active) { color: #ccc; }
@@ -115,57 +88,54 @@
   .pane.active { display: block; }
 
   .upload-zone {
-    border: 2px dashed #2d2d32;
-    border-radius: 8px;
-    padding: 24px;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.15s;
-    color: #888;
-    font-size: 13px;
+    border: 2px dashed #2d2d32; border-radius: 8px; padding: 20px;
+    text-align: center; cursor: pointer; transition: all 0.15s;
+    color: #888; font-size: 13px;
   }
   .upload-zone:hover, .upload-zone.dragover {
-    border-color: #4a90e2;
-    background: #0d0d0f;
-    color: #ccc;
+    border-color: #4a90e2; background: #0d0d0f; color: #ccc;
   }
   .upload-zone input { display: none; }
-
   .thumbs { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
   .thumb {
-    position: relative;
-    width: 100px;
-    height: 100px;
-    border-radius: 8px;
-    overflow: hidden;
-    border: 1px solid #2d2d32;
+    position: relative; width: 100px; height: 100px;
+    border-radius: 8px; overflow: hidden; border: 1px solid #2d2d32;
   }
   .thumb img { width: 100%; height: 100%; object-fit: cover; }
   .thumb .remove {
-    position: absolute;
-    top: 4px;
-    right: 4px;
-    width: 22px;
-    height: 22px;
-    border-radius: 50%;
-    background: rgba(0,0,0,0.75);
-    color: white;
-    border: none;
-    font-size: 14px;
-    line-height: 1;
-    cursor: pointer;
-    padding: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    position: absolute; top: 4px; right: 4px;
+    width: 22px; height: 22px; border-radius: 50%;
+    background: rgba(0,0,0,0.75); color: white; border: none;
+    font-size: 14px; line-height: 1; cursor: pointer; padding: 0;
+    display: flex; align-items: center; justify-content: center;
   }
   .thumb .remove:hover { background: #ff6b6b; }
+
+  /* Small inline ref preview for vector tab */
+  .ref-preview {
+    display: flex; gap: 10px; margin-top: 8px; margin-bottom: 12px; align-items: center;
+  }
+  .ref-preview .ref-thumb {
+    position: relative; width: 64px; height: 64px; border-radius: 8px;
+    overflow: hidden; border: 1px solid #2d2d32; flex-shrink: 0;
+  }
+  .ref-preview .ref-thumb img { width: 100%; height: 100%; object-fit: cover; }
+  .ref-preview .ref-thumb .rm {
+    position: absolute; top: 2px; right: 2px;
+    width: 18px; height: 18px; border-radius: 50%;
+    background: rgba(0,0,0,0.7); color: #fff; border: none;
+    font-size: 12px; cursor: pointer; display: flex;
+    align-items: center; justify-content: center; padding: 0;
+  }
+  .ref-preview .ref-thumb .rm:hover { background: #ff6b6b; }
+  .ref-preview .ref-info { font-size: 12px; color: #888; }
+  .ref-preview .ref-info .ref-note { font-size: 11px; color: #555; margin-top: 2px; }
 </style>
 </head>
 <body>
 <div class="container">
-  <h1>🍌 Nano Banana 2</h1>
-  <div class="subtitle">Песочница для генерации и редактирования изображений через fal.ai API</div>
+  <h1>🎨 AI Image Playground</h1>
+  <div class="subtitle">Nano Banana 2 + Recraft Vector · fal.ai API</div>
 
   <div class="card">
     <label>FAL API Key</label>
@@ -174,15 +144,16 @@
   </div>
 
   <div class="tabs">
-    <button class="tab active" data-tab="generate">Generate (text → image)</button>
-    <button class="tab" data-tab="edit">Edit (image → image)</button>
+    <button class="tab active" data-tab="generate">🍌 Generate</button>
+    <button class="tab" data-tab="edit">✏️ Edit</button>
+    <button class="tab" data-tab="vector">🔷 Vector</button>
   </div>
 
+  <!-- GENERATE -->
   <div class="pane active" id="pane-generate">
     <div class="card">
       <label>Prompt</label>
       <textarea id="prompt-gen" placeholder="A futuristic cat astronaut floating in a neon-lit space station, cinematic lighting"></textarea>
-
       <div class="row" style="margin-top: 12px;">
         <div>
           <label>Aspect ratio</label>
@@ -216,12 +187,12 @@
           </select>
         </div>
       </div>
-
-      <button id="generateBtn" style="margin-top: 16px;">Сгенерировать</button>
+      <button class="action-btn" id="generateBtn" style="margin-top: 16px;">Сгенерировать</button>
       <div class="status" id="status-gen"></div>
     </div>
   </div>
 
+  <!-- EDIT -->
   <div class="pane" id="pane-edit">
     <div class="card">
       <label>Референсы (до 3 фото)</label>
@@ -231,10 +202,8 @@
         <input type="file" id="fileInput" accept="image/*" multiple>
       </div>
       <div class="thumbs" id="thumbs"></div>
-
       <label style="margin-top: 16px;">Инструкция</label>
       <textarea id="prompt-edit" placeholder="replace the background with a sunset beach, keep the person exactly as is"></textarea>
-
       <div class="row" style="margin-top: 12px;">
         <div>
           <label>Aspect ratio</label>
@@ -268,9 +237,70 @@
           </select>
         </div>
       </div>
-
-      <button id="editBtn" style="margin-top: 16px;">Отредактировать</button>
+      <button class="action-btn" id="editBtn" style="margin-top: 16px;">Отредактировать</button>
       <div class="status" id="status-edit"></div>
+    </div>
+  </div>
+
+  <!-- VECTOR -->
+  <div class="pane" id="pane-vector">
+    <div class="card">
+      <!-- Optional reference -->
+      <label>Визуальный референс (опционально)</label>
+      <div class="upload-zone" id="vecUploadZone" style="padding: 14px;">
+        <div>📎 Перетащи макет или кликни — нейросеть возьмёт его за основу</div>
+        <div style="font-size: 11px; margin-top: 3px; color: #555;">Без референса — генерация с нуля через V4 · С референсом — вариации через V3</div>
+        <input type="file" id="vecFileInput" accept="image/*">
+      </div>
+      <div class="ref-preview" id="vecRefPreview" style="display:none;"></div>
+
+      <label>Prompt</label>
+      <textarea id="prompt-vec" placeholder="a minimalist vector logo featuring a geometric mountain peak in navy blue, with the company name 'Summit' in a modern sans-serif font below"></textarea>
+
+      <div class="row" style="margin-top: 12px;">
+        <div>
+          <label>Модель (без референса)</label>
+          <select id="model-vec">
+            <option value="fal-ai/recraft/v4/text-to-vector" selected>Recraft V4 ($0.08)</option>
+            <option value="fal-ai/recraft/v4.1/text-to-vector">Recraft V4.1 ($0.08)</option>
+            <option value="fal-ai/recraft/v4/pro/text-to-vector">Recraft V4 Pro ($0.30)</option>
+            <option value="fal-ai/recraft/v4.1/pro/text-to-vector">Recraft V4.1 Pro ($0.30)</option>
+          </select>
+        </div>
+        <div>
+          <label>Размер</label>
+          <select id="size-vec">
+            <option value="1024x1024" selected>1024 × 1024</option>
+            <option value="1365x1024">1365 × 1024 (4:3)</option>
+            <option value="1024x1365">1024 × 1365 (3:4)</option>
+            <option value="1536x1024">1536 × 1024 (3:2)</option>
+            <option value="1024x1536">1024 × 1536 (2:3)</option>
+            <option value="1820x1024">1820 × 1024 (16:9)</option>
+            <option value="1024x1820">1024 × 1820 (9:16)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="row">
+        <div>
+          <label>Стиль (с референсом — V3)</label>
+          <select id="style-vec">
+            <option value="vector_illustration" selected>Vector illustration</option>
+            <option value="vector_illustration/engraving">Engraving</option>
+            <option value="vector_illustration/line_art">Line art</option>
+            <option value="vector_illustration/line_circuit">Line circuit</option>
+            <option value="vector_illustration/linocut">Linocut</option>
+            <option value="digital_illustration">Digital illustration</option>
+            <option value="digital_illustration/hand_drawn">Hand drawn</option>
+            <option value="digital_illustration/2d_art_poster">2D Art poster</option>
+            <option value="digital_illustration/handmade_3d">Handmade 3D</option>
+            <option value="realistic_image">Realistic image</option>
+          </select>
+        </div>
+      </div>
+
+      <button class="action-btn" id="vectorBtn" style="margin-top: 16px;">Сгенерировать вектор</button>
+      <div class="status" id="status-vec"></div>
     </div>
   </div>
 
@@ -281,6 +311,7 @@
   const apiKeyInput = document.getElementById('apiKey');
   const results = document.getElementById('results');
 
+  // Tab switching
   document.querySelectorAll('.tab').forEach(btn => {
     btn.addEventListener('click', () => {
       document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
@@ -290,38 +321,70 @@
     });
   });
 
-  // GENERATE
+  // ---- SHARED API ----
+  async function callFal(endpoint, payload, apiKey, statusEl) {
+    const submitRes = await fetch(`https://queue.fal.run/${endpoint}`, {
+      method: 'POST',
+      headers: { 'Authorization': `Key ${apiKey}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    if (!submitRes.ok) { const err = await submitRes.text(); throw new Error(`${submitRes.status}: ${err}`); }
+    const submitData = await submitRes.json();
+    const statusUrl = submitData.status_url;
+    const responseUrl = submitData.response_url;
+    setStatus(statusEl, `В очереди (${submitData.request_id.slice(0, 8)}...)`);
+    let attempts = 0;
+    while (attempts < 120) {
+      await new Promise(r => setTimeout(r, 1500));
+      const sRes = await fetch(statusUrl, { headers: { 'Authorization': `Key ${apiKey}` } });
+      const sData = await sRes.json();
+      if (sData.status === 'COMPLETED') { setStatus(statusEl, 'Готово, загружаю...'); break; }
+      else if (sData.status === 'IN_PROGRESS') { setStatus(statusEl, 'Генерирую... 🎨'); }
+      else if (sData.status === 'IN_QUEUE') { setStatus(statusEl, `В очереди (позиция ${sData.queue_position ?? '?'})`); }
+      else if (sData.status === 'FAILED') { throw new Error('Не удалось: ' + JSON.stringify(sData)); }
+      attempts++;
+    }
+    const resultRes = await fetch(responseUrl, { headers: { 'Authorization': `Key ${apiKey}` } });
+    return await resultRes.json();
+  }
+
+  function readFileAsDataURL(file) {
+    return new Promise((res, rej) => {
+      const r = new FileReader(); r.onload = () => res(r.result); r.onerror = rej; r.readAsDataURL(file);
+    });
+  }
+
+  // ---- GENERATE ----
   const generateBtn = document.getElementById('generateBtn');
   const statusGen = document.getElementById('status-gen');
+  generateBtn.addEventListener('click', doGenerate);
+  document.getElementById('prompt-gen').addEventListener('keydown', e => {
+    if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) doGenerate();
+  });
 
-  async function generate() {
+  async function doGenerate() {
     const apiKey = apiKeyInput.value.trim();
     const prompt = document.getElementById('prompt-gen').value.trim();
     if (!apiKey) { setStatus(statusGen, 'Введи API-ключ', true); return; }
     if (!prompt) { setStatus(statusGen, 'Введи prompt', true); return; }
-
     generateBtn.disabled = true;
-    setStatus(statusGen, 'Отправляю запрос...');
+    setStatus(statusGen, 'Отправляю...');
     try {
-      const payload = {
-        prompt: prompt,
+      const data = await callFal('fal-ai/nano-banana-2', {
+        prompt,
         aspect_ratio: document.getElementById('aspectRatio-gen').value,
         resolution: document.getElementById('resolution-gen').value,
         num_images: parseInt(document.getElementById('numImages-gen').value),
         output_format: 'png'
-      };
-      const images = await callFal('fal-ai/nano-banana-2', payload, apiKey, statusGen);
-      renderResults(images, prompt);
-      setStatus(statusGen, `✓ Готово (${images.length} шт.)`);
-    } catch (err) {
-      console.error(err);
-      setStatus(statusGen, 'Ошибка: ' + err.message, true);
-    } finally {
-      generateBtn.disabled = false;
-    }
+      }, apiKey, statusGen);
+      if (!data.images?.length) throw new Error('Нет картинок: ' + JSON.stringify(data));
+      renderImageCards(data.images, prompt, 'png');
+      setStatus(statusGen, `✓ Готово (${data.images.length} шт.)`);
+    } catch (err) { console.error(err); setStatus(statusGen, 'Ошибка: ' + err.message, true); }
+    finally { generateBtn.disabled = false; }
   }
 
-  // EDIT
+  // ---- EDIT ----
   const editBtn = document.getElementById('editBtn');
   const statusEdit = document.getElementById('status-edit');
   const uploadZone = document.getElementById('uploadZone');
@@ -329,169 +392,175 @@
   const thumbs = document.getElementById('thumbs');
   const uploadedImages = [];
 
-  uploadZone.addEventListener('click', () => fileInput.click());
-  fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
-  uploadZone.addEventListener('dragover', (e) => {
-    e.preventDefault();
-    uploadZone.classList.add('dragover');
+  editBtn.addEventListener('click', doEdit);
+  document.getElementById('prompt-edit').addEventListener('keydown', e => {
+    if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) doEdit();
   });
+  uploadZone.addEventListener('click', () => fileInput.click());
+  fileInput.addEventListener('change', e => handleEditFiles(e.target.files));
+  uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.classList.add('dragover'); });
   uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('dragover'));
-  uploadZone.addEventListener('drop', (e) => {
-    e.preventDefault();
-    uploadZone.classList.remove('dragover');
-    handleFiles(e.dataTransfer.files);
+  uploadZone.addEventListener('drop', e => {
+    e.preventDefault(); uploadZone.classList.remove('dragover');
+    handleEditFiles(e.dataTransfer.files);
   });
 
-  async function handleFiles(fileList) {
-    const files = Array.from(fileList).filter(f => f.type.startsWith('image/'));
-    for (const file of files) {
-      if (uploadedImages.length >= 3) {
-        setStatus(statusEdit, 'Максимум 3 референса', true);
-        break;
-      }
-      const dataUrl = await readFileAsDataURL(file);
-      uploadedImages.push({ dataUrl, name: file.name });
+  async function handleEditFiles(fileList) {
+    for (const file of Array.from(fileList).filter(f => f.type.startsWith('image/'))) {
+      if (uploadedImages.length >= 3) { setStatus(statusEdit, 'Максимум 3', true); break; }
+      uploadedImages.push({ dataUrl: await readFileAsDataURL(file), name: file.name });
     }
     fileInput.value = '';
     renderThumbs();
   }
 
-  function readFileAsDataURL(file) {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = reject;
-      reader.readAsDataURL(file);
-    });
-  }
-
   function renderThumbs() {
     thumbs.innerHTML = '';
     uploadedImages.forEach((img, i) => {
-      const div = document.createElement('div');
-      div.className = 'thumb';
-      const imgEl = document.createElement('img');
-      imgEl.src = img.dataUrl;
-      imgEl.title = img.name;
-      div.appendChild(imgEl);
-      const rm = document.createElement('button');
-      rm.className = 'remove';
-      rm.textContent = '×';
-      rm.onclick = () => {
-        uploadedImages.splice(i, 1);
-        renderThumbs();
-      };
-      div.appendChild(rm);
-      thumbs.appendChild(div);
+      const div = document.createElement('div'); div.className = 'thumb';
+      const el = document.createElement('img'); el.src = img.dataUrl; el.title = img.name; div.appendChild(el);
+      const rm = document.createElement('button'); rm.className = 'remove'; rm.textContent = '×';
+      rm.onclick = () => { uploadedImages.splice(i, 1); renderThumbs(); };
+      div.appendChild(rm); thumbs.appendChild(div);
     });
   }
 
-  async function edit() {
+  async function doEdit() {
     const apiKey = apiKeyInput.value.trim();
     const prompt = document.getElementById('prompt-edit').value.trim();
     if (!apiKey) { setStatus(statusEdit, 'Введи API-ключ', true); return; }
-    if (uploadedImages.length === 0) { setStatus(statusEdit, 'Загрузи хотя бы одно фото', true); return; }
+    if (!uploadedImages.length) { setStatus(statusEdit, 'Загрузи фото', true); return; }
     if (!prompt) { setStatus(statusEdit, 'Введи инструкцию', true); return; }
-
     editBtn.disabled = true;
-    setStatus(statusEdit, 'Отправляю запрос...');
+    setStatus(statusEdit, 'Отправляю...');
     try {
-      const payload = {
-        prompt: prompt,
-        image_urls: uploadedImages.map(img => img.dataUrl),
+      const data = await callFal('fal-ai/nano-banana-2/edit', {
+        prompt,
+        image_urls: uploadedImages.map(i => i.dataUrl),
         aspect_ratio: document.getElementById('aspectRatio-edit').value,
         resolution: document.getElementById('resolution-edit').value,
         num_images: parseInt(document.getElementById('numImages-edit').value),
         output_format: 'png'
-      };
-      const images = await callFal('fal-ai/nano-banana-2/edit', payload, apiKey, statusEdit);
-      renderResults(images, prompt);
-      setStatus(statusEdit, `✓ Готово (${images.length} шт.)`);
-    } catch (err) {
-      console.error(err);
-      setStatus(statusEdit, 'Ошибка: ' + err.message, true);
-    } finally {
-      editBtn.disabled = false;
-    }
+      }, apiKey, statusEdit);
+      if (!data.images?.length) throw new Error('Нет картинок: ' + JSON.stringify(data));
+      renderImageCards(data.images, prompt, 'png');
+      setStatus(statusEdit, `✓ Готово (${data.images.length} шт.)`);
+    } catch (err) { console.error(err); setStatus(statusEdit, 'Ошибка: ' + err.message, true); }
+    finally { editBtn.disabled = false; }
   }
 
-  // SHARED
-  async function callFal(endpoint, payload, apiKey, statusEl) {
-    const submitRes = await fetch(`https://queue.fal.run/${endpoint}`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Key ${apiKey}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(payload)
-    });
+  // ---- VECTOR ----
+  const vectorBtn = document.getElementById('vectorBtn');
+  const statusVec = document.getElementById('status-vec');
+  const vecUploadZone = document.getElementById('vecUploadZone');
+  const vecFileInput = document.getElementById('vecFileInput');
+  const vecRefPreview = document.getElementById('vecRefPreview');
+  let vecRefImage = null; // { dataUrl, name }
 
-    if (!submitRes.ok) {
-      const err = await submitRes.text();
-      throw new Error(`${submitRes.status}: ${err}`);
+  vectorBtn.addEventListener('click', doVector);
+  document.getElementById('prompt-vec').addEventListener('keydown', e => {
+    if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) doVector();
+  });
+
+  vecUploadZone.addEventListener('click', () => vecFileInput.click());
+  vecFileInput.addEventListener('change', async e => {
+    const file = e.target.files[0];
+    if (file && file.type.startsWith('image/')) {
+      vecRefImage = { dataUrl: await readFileAsDataURL(file), name: file.name };
+      renderVecRef();
     }
+    vecFileInput.value = '';
+  });
+  vecUploadZone.addEventListener('dragover', e => { e.preventDefault(); vecUploadZone.classList.add('dragover'); });
+  vecUploadZone.addEventListener('dragleave', () => vecUploadZone.classList.remove('dragover'));
+  vecUploadZone.addEventListener('drop', async e => {
+    e.preventDefault(); vecUploadZone.classList.remove('dragover');
+    const file = Array.from(e.dataTransfer.files).find(f => f.type.startsWith('image/'));
+    if (file) {
+      vecRefImage = { dataUrl: await readFileAsDataURL(file), name: file.name };
+      renderVecRef();
+    }
+  });
 
-    const submitData = await submitRes.json();
-    const requestId = submitData.request_id;
-    // fal.ai возвращает готовые URL для polling и получения результата
-    const statusUrl = submitData.status_url;
-    const responseUrl = submitData.response_url;
-    setStatus(statusEl, `В очереди (${requestId.slice(0, 8)}...)`);
+  function renderVecRef() {
+    vecRefPreview.innerHTML = '';
+    if (!vecRefImage) {
+      vecRefPreview.style.display = 'none';
+      return;
+    }
+    vecRefPreview.style.display = 'flex';
+    const thumb = document.createElement('div'); thumb.className = 'ref-thumb';
+    const img = document.createElement('img'); img.src = vecRefImage.dataUrl; thumb.appendChild(img);
+    const rm = document.createElement('button'); rm.className = 'rm'; rm.textContent = '×';
+    rm.onclick = () => { vecRefImage = null; renderVecRef(); };
+    thumb.appendChild(rm);
+    vecRefPreview.appendChild(thumb);
+    const info = document.createElement('div'); info.className = 'ref-info';
+    info.innerHTML = `<div>${vecRefImage.name}</div><div class="ref-note">Будет использован Recraft V3 image-to-image со стилем из селектора ниже</div>`;
+    vecRefPreview.appendChild(info);
+  }
 
-    let attempts = 0;
-    while (attempts < 120) {
-      await new Promise(r => setTimeout(r, 1500));
-      const statusRes = await fetch(statusUrl, {
-        headers: { 'Authorization': `Key ${apiKey}` }
-      });
-      const statusData = await statusRes.json();
+  async function doVector() {
+    const apiKey = apiKeyInput.value.trim();
+    const prompt = document.getElementById('prompt-vec').value.trim();
+    if (!apiKey) { setStatus(statusVec, 'Введи API-ключ', true); return; }
+    if (!prompt) { setStatus(statusVec, 'Введи prompt', true); return; }
+    vectorBtn.disabled = true;
+    setStatus(statusVec, 'Отправляю...');
+    try {
+      let data;
+      const style = document.getElementById('style-vec').value;
+      const size = document.getElementById('size-vec').value;
+      const [w, h] = size.split('x').map(Number);
 
-      if (statusData.status === 'COMPLETED') {
-        setStatus(statusEl, 'Готово, загружаю результат...');
-        break;
-      } else if (statusData.status === 'IN_PROGRESS') {
-        setStatus(statusEl, 'Генерирую... 🎨');
-      } else if (statusData.status === 'IN_QUEUE') {
-        setStatus(statusEl, `В очереди (позиция ${statusData.queue_position ?? '?'})`);
-      } else if (statusData.status === 'FAILED') {
-        throw new Error('Запрос провалился: ' + JSON.stringify(statusData));
+      if (vecRefImage) {
+        // With reference → Recraft V3 image-to-image
+        data = await callFal('fal-ai/recraft/v3/image-to-image', {
+          prompt,
+          image_url: vecRefImage.dataUrl,
+          style,
+          image_size: { width: w, height: h }
+        }, apiKey, statusVec);
+      } else {
+        // No reference → V4 text-to-vector
+        const endpoint = document.getElementById('model-vec').value;
+        data = await callFal(endpoint, {
+          prompt,
+          image_size: { width: w, height: h }
+        }, apiKey, statusVec);
       }
-      attempts++;
-    }
 
-    const resultRes = await fetch(responseUrl, {
-      headers: { 'Authorization': `Key ${apiKey}` }
-    });
-    const resultData = await resultRes.json();
+      if (!data.images?.length) throw new Error('Нет результата: ' + JSON.stringify(data));
 
-    if (!resultData.images || resultData.images.length === 0) {
-      throw new Error('В ответе нет картинок: ' + JSON.stringify(resultData));
-    }
-    return resultData.images;
+      // Determine format from response
+      const isSvg = data.images[0].content_type === 'image/svg+xml' ||
+                     data.images[0].url?.endsWith('.svg');
+      renderImageCards(data.images, prompt, isSvg ? 'svg' : 'png');
+      setStatus(statusVec, '✓ Готово!');
+    } catch (err) { console.error(err); setStatus(statusVec, 'Ошибка: ' + err.message, true); }
+    finally { vectorBtn.disabled = false; }
   }
 
-  function renderResults(images, prompt) {
-    images.forEach((img) => {
+  // ---- RENDER RESULTS ----
+  function renderImageCards(images, prompt, format) {
+    images.forEach(img => {
       const card = document.createElement('div');
       card.className = 'img-card';
-
       const imgEl = document.createElement('img');
       imgEl.src = img.url;
       imgEl.alt = prompt.slice(0, 60);
       imgEl.title = prompt;
       card.appendChild(imgEl);
-
       const dlBtn = document.createElement('button');
       dlBtn.className = 'dl-btn';
-      dlBtn.textContent = '⬇ Скачать';
+      dlBtn.textContent = format === 'svg' ? '⬇ SVG' : '⬇ Скачать';
       dlBtn.onclick = () => {
         const a = document.createElement('a');
         a.href = img.url;
-        a.download = 'nano_banana_' + Date.now() + '.png';
+        a.download = (format === 'svg' ? 'recraft_' : 'nano_banana_') + Date.now() + '.' + format;
         a.click();
       };
       card.appendChild(dlBtn);
-
       results.prepend(card);
     });
   }
@@ -500,15 +569,6 @@
     el.textContent = msg;
     el.className = 'status' + (isError ? ' error' : '');
   }
-
-  generateBtn.addEventListener('click', generate);
-  editBtn.addEventListener('click', edit);
-  document.getElementById('prompt-gen').addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) generate();
-  });
-  document.getElementById('prompt-edit').addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) edit();
-  });
 </script>
 </body>
 </html>
